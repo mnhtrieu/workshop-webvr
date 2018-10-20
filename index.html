@@ -8,22 +8,61 @@
     </head>
     <body>
         <canvas id="scene" width="500" height="500"></canvas>
+        <div id="debug">null m/s2</div>
         <script type="module">
-            import {Engine} from "./src/Engine.js";
-            import {Ball} from "./src/Ball.js";
-            import {Vector2D} from "./src/Vector2D.js";
+            import { Engine } from './src/Engine.js';
+            import { Ball } from './src/Ball.js';
+            import { Vector2D } from './src/Vector2D.js';
 
             const scene = document.getElementById('scene');
-            const engine = new Engine(scene, new Vector2D(0,200),5);
-            for(let i = 0; i < 50; i++)
-                new Ball(
+            const engine = new Engine(
+                scene,
+                new Vector2D(0,0),
+                0.5
+            );
+
+            const balls = [];
+
+            for(let i=0;i<100;i++){
+                balls.push(new Ball(
                     engine,
-                    '#FFBF00',
+                    '#ffbf00',
                     Math.random()*10+10,
                     new Vector2D(Math.random()*500,Math.random()*500),
-                    new Vector2D((Math.random()-.5)*100,(Math.random()-.5)*100));
-
+                    new Vector2D((Math.random()-.5)*100,(Math.random()-.5)*100),
+                ));
+            }
             engine.run();
+
+            let currentAcceleration = new Vector2D(0,0);
+            engine.enhance((ctx)=>{
+                if(currentAcceleration){
+                    ctx.beginPath();
+                    ctx.arc(
+                        currentAcceleration.x*100 + 250,
+                        currentAcceleration.y*100 + 250,
+                        10,
+                        0,
+                        Math.PI * 2,
+                        true,
+                    );
+                    ctx.fillStyle='#ff0000';
+                    ctx.fill();
+                }
+            });
+
+            const debug = document.getElementById('debug');
+            window.addEventListener('devicemotion', function(event) {
+                currentAcceleration = new Vector2D(
+                    event.acceleration.x,
+                    event.acceleration.y
+                );
+                for(const ball of balls){
+                    ball.movement.addInPlace(currentAcceleration);
+                }
+                //debug.innerHTML = event.acceleration.x + ' m/s2';
+            });
+
         </script>
     </body>
 

@@ -6,6 +6,7 @@ export class Engine {
         this.gravity = gravity;
         this.friction = friction;
         this.objects = [];
+        this.enhancers = [];
     }
 
     /**
@@ -16,13 +17,18 @@ export class Engine {
 
         let timeLast = null;
 
-        const loop = (time) =>{
+        const loop = (time) => {
             ctx.clearRect(0, 0, scene.width, scene.height);
 
-            for(const obj of this.objects){
-                if (timeLast)
-                    obj.update((timeLast - time) / 1000);
-                obj.render(ctx);
+            for (const object of this.objects) {
+                if (timeLast) {
+                    object.update((time - timeLast) / 1000);
+                }
+                object.render(ctx);
+            }
+
+            for (const enhancer of this.enhancers) {
+                enhancer(ctx);
             }
 
             timeLast = time;
@@ -35,15 +41,20 @@ export class Engine {
      * Adds an object to the canvas
      * @param object an object
      */
-    addObject(object){
+    addObject(object) {
         this.objects.push(object);
     }
+
+    enhance(enhancer) {
+        this.enhancers.push(enhancer);
+    }
+
 
     /**
      * Gets the size of the canvas
      * @returns {Vector2D}
      */
-    get size(){
+    get size() {
         return new Vector2D(scene.width, scene.height);
     }
 }
