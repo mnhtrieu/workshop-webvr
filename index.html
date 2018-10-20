@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="cs" dir="ltr">
+    <head>
+        <meta charset="UTF-8">
+        <title>JS Engine</title>
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <body>
+        <canvas id="scene" width="500" height="500"></canvas>
+        <script type="module">
+            import {Engine} from "./src/Engine.js";
+            import {Ball} from "./src/Ball.js";
+            import {Vector2D} from "./src/Vector2D.js";
+
+            const scene = document.getElementById('scene');
+            const engine = new Engine(scene, new Vector2D(0,200),5);
+            for(let i = 0; i < 50; i++)
+                new Ball(
+                    engine,
+                    '#FFBF00',
+                    Math.random()*10+10,
+                    new Vector2D(Math.random()*500,Math.random()*500),
+                    new Vector2D((Math.random()-.5)*100,(Math.random()-.5)*100));
+
+            engine.run();
+        </script>
+    </body>
+
+</html>
